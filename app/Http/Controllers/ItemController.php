@@ -139,3 +139,23 @@ class ItemController extends Controller
 
         return redirect()->route('items.index')->with('success', 'Ссылка на Google таблицу успешно обновлена');
     }
+
+    /**
+     * @return RedirectResponse
+     */
+    public function testGoogleConnection()
+    {
+        try {
+            $service = new GoogleSheetsService;
+            $result = $service->testConnection();
+
+            if ($result['success']) {
+                return redirect()->route('items.index')->with('success', 'Подлючение к Google таблице успешно!');
+            } else {
+                return redirect()->route('items.index')->with('error', 'Ошибка подключения: '.$result['message']);
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('items.index')->with('error', 'Ошибка подключения: '.$e->getMessage());
+        }
+    }
+}
